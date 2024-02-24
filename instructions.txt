@@ -1,0 +1,2 @@
+
+to start celery worker =  (venv) $ celery -A app.celery worker --loglevel=info
