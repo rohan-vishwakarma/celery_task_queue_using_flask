@@ -4,6 +4,7 @@ from celery.result import AsyncResult
 from flask_restful import Api, Resource
 from Async.tasks import task, task_add_number
 from Async.tasks import celery_app
+from Web.views import DataProcessing
 
 app = Flask(__name__)
 api = Api(app)
@@ -62,8 +63,8 @@ def user_form():
 
 
 
-
 api.add_resource(Main, '/')
+api.add_resource(DataProcessing, '/dataprocessing')
 
 if __name__ == '__main__':
     app.app_context()

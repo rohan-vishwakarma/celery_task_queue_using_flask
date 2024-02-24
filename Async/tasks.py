@@ -1,13 +1,8 @@
-import json
+import json, time
 from celery import Celery
 from celery.utils.log import get_task_logger
 
-import time
-
-from flask import jsonify
-
 celery_app = Celery('task', backend='redis://localhost:6379', broker='redis://localhost:6379')
-
 logger = get_task_logger(__name__)
 
 @celery_app.task()
@@ -25,7 +20,7 @@ def task_add_number(x, y):
     logger.info("Work Finished")
     return x + y
 
-@celery_app.task()
+@celery_app.task(serializer='json')
 def user_form_task(username, email, city):
     logger.info("Form submittion initiated by worker")
     time.sleep(20)
