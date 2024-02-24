@@ -1,4 +1,4 @@
-from flask import Flask, app
+from flask import Flask, app, jsonify, request
 from celery import Celery
 from celery.result import AsyncResult
 from flask_restful import Api, Resource
@@ -7,6 +7,13 @@ from Async.tasks import celery_app
 
 app = Flask(__name__)
 api = Api(app)
+app.config.from_mapping(
+    CELERY=dict(
+        broker_url="redis://localhost:6379",
+        result_backend="redis://localhost:6379",
+        # task_ignore_result=True,
+    )
+)
 
 celery = Celery('worker', backend='redis://localhost:6379', broker='redis://localhost:6379')
 
@@ -35,9 +42,29 @@ def get_addion_status(task_id):
     }
 
 
+@app.route('/userform', methods=['POST'])
+def user_form():
+    try:
+        username = request.form['username']
+        email = request.form['email']
+        city = request.form['city']
+        status = celery.send_task('Async.tasks.user_form_task',
+                kwargs={"username": username, "email": email, "city": city})
+        return jsonify({
+                "message" : "Form data Submitted Successfully",
+                "Task_id" : status.id
+            })
+    
+    
+        user_form_task
+    except Exception as e:
+        app.logger.info(e)
+
+
 
 
 api.add_resource(Main, '/')
 
 if __name__ == '__main__':
+    app.app_context()
     app.run(debug=True)
