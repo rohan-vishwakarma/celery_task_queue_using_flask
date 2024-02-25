@@ -2,19 +2,23 @@ from flask import Flask, app, jsonify, request
 from celery import Celery
 from celery.result import AsyncResult
 from flask_restful import Api, Resource
-from Async.tasks import task, task_add_number
 from Async.tasks import celery_app
+from Async.tasks import task, task_add_number
 from Web.views import DataProcessing
+from datetime import timedelta
 
 app = Flask(__name__)
 api = Api(app)
-app.config.from_mapping(
-    CELERY=dict(
-        broker_url="redis://localhost:6379",
-        result_backend="redis://localhost:6379",
-        # task_ignore_result=True,
-    )
-)
+app.config['CELERY_BACKEND'] = 'redis://localhost:6379'
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
+
+app.config['CELERYBEAT_SCHEDULE'] ={
+    'say-every-5-seconds':{
+        'task' : 'return_something',
+        'schedule':  20, 
+    }
+}
+app.config['CELERY_TIMEZONE'] = 'UTC'
 
 celery = Celery('worker', backend='redis://localhost:6379', broker='redis://localhost:6379')
 
@@ -60,6 +64,11 @@ def user_form():
         user_form_task
     except Exception as e:
         app.logger.info(e)
+
+
+
+
+
 
 
 

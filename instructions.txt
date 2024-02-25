@@ -1,2 +1,65 @@
 
 to start celery worker =  (venv) $ celery -A app.celery worker --loglevel=info
+
+----->celery -A proj purge
+
+----->You can also specify the queues to purge using the -Q option:
+
+----->celery -A proj purge -Q celery,foo,bar
+
+----->and exclude queues from being purged using the -X option:
+
+    celery -A proj purge -X celery
+
+----->inspect active: List active tasks
+
+    celery -A proj inspect active
+
+    These are all the tasks that are currently being executed.
+
+---->inspect scheduled: List scheduled ETA tasks
+
+    celery -A proj inspect scheduled
+
+    These are tasks reserved by the worker when they have an eta or countdown argument set.
+
+----->inspect reserved: List reserved tasks
+
+    celery -A proj inspect reserved
+
+    This will list all tasks that have been prefetched by the worker, and is currently waiting to be executed (doesn’t include tasks with an ETA value set).
+
+----->inspect revoked: List history of revoked tasks
+
+celery -A proj inspect revoked
+
+    celery -A proj inspect registered
+
+----->inspect stats: Show worker statistics (see Statistics)
+
+    celery -A proj inspect stats
+
+----->inspect query_task: Show information about task(s) by id.
+
+    Any worker having a task in this set of ids reserved/active will respond with status and information.
+
+----->celery -A proj inspect query_task e9f6c8f0-fec9-4ae8-a8c6-cf8c8451d4f8
+
+You can also query for i
+
+    celery -A proj inspect query_task id1 id2 ... idN
+
+----->control enable_events: Enable events
+
+    celery -A proj control enable_events
+
+----->control disable_events: Disable events
+
+    celery -A proj control disable_events
+
+----->migrate: Migrate tasks from one broker to another (EXPERIMENTAL).
+
+    celery -A proj migrate redis://localhost amqp://localhost
+
+This command will migrate all the tasks on one broker to another.
+ As this command is new and experimental you should be sure to have a backup of the data before proceeding.

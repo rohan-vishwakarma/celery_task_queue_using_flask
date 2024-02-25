@@ -35,3 +35,8 @@ def user_form_task(username, email, city):
 
 
     
+@celery_app.task(name="scheduler")
+def return_something():
+    print("something")
+    logger.info("Hello! from periodic task")
+    return 'something'
